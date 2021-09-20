@@ -1,12 +1,12 @@
 ![ring-mqtt-logo](https://raw.githubusercontent.com/tsightler/ring-mqtt/dev/images/ring-mqtt-logo.png)
 
-This script leverages the excellent [ring-client-api](https://github.com/dgreif/ring) to provide a bridge between MQTT and suppoted Ring devices such as alarm control panel, lights and cameras ([full list of supported devices and features](#current-features)).  It also provides support for Home Assistant style MQTT auto-discovery which allows for easy Home Assistant integration with minimal configuration (requires Home Assistant MQTT integration to be enabled).  This also includes an optional [Home Assistant Addon](https://github.com/tsightler/ring-mqtt-ha-addon) for users of HassOS/Home Assistant Installer.  It can also be used with any other tool capable of working with MQTT as it provides consistent topic naming based on location/device ID.
+This script leverages the excellent [ring-client-api](https://github.com/dgreif/ring) to provide a bridge between MQTT and supported Ring devices such as alarm control panel, lights and cameras ([full list of supported devices and features](#current-features)).  It also provides support for Home Assistant style MQTT auto-discovery which allows for easy Home Assistant integration with minimal configuration (requires Home Assistant MQTT integration to be enabled).  This also includes an optional [Home Assistant Addon](https://github.com/tsightler/ring-mqtt-ha-addon) for users of HassOS/Home Assistant Installer.  It can also be used with any other tool capable of working with MQTT as it provides consistent topic naming based on location/device ID.
  
 ## Installation
 Starting with the 4.0.0 release of ring-mqtt, Docker is the recommended installation method, however, standard, non-Docker installation is still fully supported.  Please skip to the [Standard Install](#standard-install) section for details on this install method.
 
 ### Docker Install
-For Docker installtion details, please read this section entirely.  While it is possible to build the image locally from the included Dockerfile, it is recommended to install and update by pulling the official image directly from Docker Hub.  You can pull the image with the following command:
+For Docker installation details, please read this section entirely.  While it is possible to build the image locally from the included Dockerfile, it is recommended to install and update by pulling the official image directly from Docker Hub.  You can pull the image with the following command:
 ```
 docker pull tsightler/ring-mqtt
 ```
@@ -38,14 +38,14 @@ Note that the only absolutely required parameter for initial start is **RINGTOKE
 | MQTTPASSWORD | Password for MQTT broker | blank - Use anonymous connection |
 | ENABLECAMERAS | Default false since the native Ring component for Home Assistant supports cameras, set to true to enable camera/chime support in this add-on.  Access to Chimes cannot be granted to shared users so Chime support requires use of the primary Ring account. | false |
 | SNAPSHOTMODE | Enable still snapshot image updates from camera, see [Snapshot Options](#snapshot-options) for details | 'disabled' |
-| LIVESTREAMUSER | Specifiy a password for RTSP connections.  Highly recommended if the RTSP port for external media player access is enabled.  The livestream_password option must also be defined or this option is ignored. | blank |
+| LIVESTREAMUSER | Specify a password for RTSP connections.  Highly recommended if the RTSP port for external media player access is enabled.  The livestream_password option must also be defined or this option is ignored. | blank |
 | LIVESTREAMPASSWORD | Specifiy a password for RTSP connections.  Highly recommended if the RTSP port for external media player access is enabled.  The livestream_user option must also be defined or this option is ignored. | blank |
 | ENABLEMODES | Enable support for Location Modes for sites without a Ring Alarm Panel | false |
 | ENABLEPANIC | Enable panic buttons on Alarm Control Panel device | false |
 | BEAMDURATION | Set a default duration in seconds for Smart Lights when turned on via this integration.  The default value of 0 will attempt to detect the last used duration or default to 60 seconds for light groups.  This value can be overridden for individual lights using the duration feature but must be set before the light is turned on. | 0 |
 | DISARMCODE | Used only with Home Assistant, when defined this option causes the Home Assistant Alarm Control Panel integration to require entering this code to disarm the alarm | blank |
 | RINGLOCATIONIDS | Array of location Ids in format: "loc-id","loc-id2", see [Limiting Locations](#limiting-locations) for details | blank |
-| BRANCH | During startup pull latest master/dev branch from Github instead of running local copy, see [Branch Feature](#branch-feature) for details. | blank |
+| BRANCH | During startup pull the latest master/dev branch from Github instead of running local copy, see [Branch Feature](#branch-feature) for details. | blank |
 
 #### Starting the Docker container automatically during boot
 To start the ring-mqtt docker container automatically during boot you can simply use the standard Docker methods, for example, adding ```--restart unless-stopped``` to the ```docker run``` command will cause Docker to automatically restart the container unless it has been explicitly stopped.
@@ -53,9 +53,9 @@ To start the ring-mqtt docker container automatically during boot you can simply
 #### Branch Feature
 The Docker image includes a feature that allows for easy, temporary testing of the latest code from the master or dev branch of ring-mqtt from Github, without requiring the installation of a new image.  This feature was designed to simplify testing of newer code for users of the addon, but Docker users can leverage it as well.  When running the Docker image normally the local image copy of ring-mqtt is used, however, sometimes the latest code in the Github repo master branch may be a few versions ahead, while waiting on the code to stabilize, or a user may need to test code in the dev branch to see if it corrects a reported issue.  This feature allows this to be done very easily without having to push or build a new Docker image.  To use this feature simple add the **BRANCH** environment variable as follows:
 **BRANCH="latest"**
-When this option is set, upon starting the Docker container the startup script will use git to fetch the lastest code from the master branch before running
+When this option is set, upon starting the Docker container the startup script will use git to fetch the latest code from the master branch before running.
 **BRANCH="dev"**
-When this option is set, upon starting the Docker container the startup script will use git to fetch the lastest code from the dev branch before running
+When this option is set, upon starting the Docker container the startup script will use git to fetch the latest code from the dev branch before running.
 
 To revert to the code in the Docker image simply run the container without the BRANCH setting.
 
@@ -73,7 +73,7 @@ npm install
 
 This will install all required dependencies.  Edit config.js to configure your Ring refresh token and MQTT broker connection information and any other settings (see [Config Options](#config-options).  Note that the user the script runs as will need permission to write the config.json as, for the standalone version of the script, updated refresh tokens are written directly to the config.json file.
 
-To support live video streaming you will need to have a copy of rtsp-simple-server 0.17.3 or newer installed as well as the mosquitto clients (mosquitto_sub/moquitto_pub) for your distribution of choice.  I normally recommend installing rtsp-simple-server into /usr/local/bin, but anywhere in the system PATH is acceptable.  You can download the lastest binary release for your platform from the [rtsp-simple-server project](https://github.com/aler9/rtsp-simple-server).
+To support live video streaming you will need to have a copy of rtsp-simple-server 0.17.3 or newer installed as well as the mosquitto clients (mosquitto_sub/moquitto_pub) for your distribution of choice.  I normally recommend installing rtsp-simple-server into /usr/local/bin, but anywhere in the system PATH is acceptable.  You can download the latest binary release for your platform from the [rtsp-simple-server project](https://github.com/aler9/rtsp-simple-server).
 
 #### Config Options
 | Config Option | Description | Default |
@@ -94,7 +94,7 @@ To support live video streaming you will need to have a copy of rtsp-simple-serv
 | location_ids | Array of location Ids in format: ["loc-id", "loc-id2"], see [Limiting Locations](#limiting-locations) for details | blank |
 
 #### Starting ring-mqtt during boot
-For standalone installs the repo includes a sample unit file which can be used to automaticlly start the script during system boot as long as your system uses systemd (most modern Linux distros).  The unit file assumes that the script is installed in /opt/ring-mqtt and it runs the script as the root user (to make sure it has permissions to write config.json), but you can easily modify this to any path and user you'd like.  Just edit the file as required and drop it in /lib/systemd/system then run the following:
+For standalone installs the repo includes a sample unit file which can be used to automatically start the script during system boot as long as your system uses systemd (most modern Linux distros).  The unit file assumes that the script is installed in /opt/ring-mqtt and it runs the script as the root user (to make sure it has permissions to write config.json), but you can easily modify this to any path and user you'd like.  Just edit the file as required and drop it in /lib/systemd/system then run the following:
 
 ```
 systemctl daemon-reload
@@ -104,7 +104,7 @@ systemctl start ring-mqtt
 
 ## Configuration Details
 ### Authentication
-Ring has made two factor authentication (2FA) mandatory thus the script now only supports this authentication method.  Using 2FA requires manually acquiring a refresh token for your Ring account and seting the ring_token parameter in the config file (standard/Hass.io installs) or passing the token with the RINGTOKEN environment variable (Docker installs).
+Ring has made two factor authentication (2FA) mandatory thus the script now only supports this authentication method.  Using 2FA requires manually acquiring a refresh token for your Ring account and setting the ring_token parameter in the config file (standard/Hass.io installs) or passing the token with the RINGTOKEN environment variable (Docker installs).
 
 There are two primary ways to acquire this token:
 
@@ -129,7 +129,7 @@ npx -p ring-client-api ring-auth-cli
 For more details please check the [Refresh Tokens](https://github.com/dgreif/ring/wiki/Refresh-Tokens) documentation from the ring client API Wiki.
 
 **!!! Important Note regarding the security of your refresh token !!!**\
-Using 2FA authentication opens up the possibility that, if the environment runinng ring-mqtt is comporomised, an attacker can acquire the refresh token and use this to authenticate to your Ring account without knowing your username/password and completely bypassing any 2FA protections.  Please secure your environment carefully.
+Using 2FA authentication opens up the possibility that, if the environment running ring-mqtt is compromised, an attacker can acquire the refresh token and use this to authenticate to your Ring account without knowing your username/password and completely bypassing any 2FA protections.  Please secure your environment carefully.
 
 Because of this added risk, it's a good idea to create a second account dedicated to use with ring-mqtt and provide access to the devices you would like that account to be able to control.  This allows actions performed by this script to be easily audited since they will show up in activity logs with their own name instead of that of the primary account.  However, if do choose to use a secondary, shared account there are some limitations as Ring does not allow certain devices and functions to be granted access to shared accounts.  Because of this, support for Chimes, Smart Lighting groups, and Base Station volume control require the use of the primary Ring account.
 
@@ -137,14 +137,14 @@ Because of this added risk, it's a good idea to create a second account dedicate
 Please read the detailed [camera documentation](docs/CAMERAS.md) for more details on configuring live streaming.
 
 #### External RTSP Server Access
-When using the camera support for live streams the Docker container will also run a local instance of rtsp-simple-server.  If your streaming platform runs on the same host you can usually just access directly via the Docker network, however, if you want to access the stream from other host on the network you can expose the RTSP port during startup as well.  Note that, if you choose to export the port, it is HIGHLY recommended to set a live stream user and password using the appropriate configuration options.
+When using the camera support for live streams the Docker container will also run a local instance of rtsp-simple-server.  If your streaming platform runs on the same host you can usually just access directly via the Docker network, however, if you want to access the stream from other host on the network you can expose the RTSP port during startup as well.  Note that, if you choose to export the port, it is HIGHLY recommended setting a live stream user and password using the appropriate configuration options.
 
 To export the RTSP port externally simple add the standard Docker port options to your run command, something like "-p 8554:8554" would allow external media player clients to access the RTSP server on TCP port 8554.
 
 ### Arming Bypass
-By default, attempts to arm the alarm when any contact sensors are in faulted state will fail with an audible message from the base station that sensors require bypass. Arming will retry 5 times evern 10 seconds giving time for doors/windows to be closed, however, if sensors still require bypass after this time, arming will fail.
+By default, attempts to arm the alarm when any contact sensors are in faulted state will fail with an audible message from the base station that sensors require bypass. Arming will retry 5 times every 10 seconds giving time for doors/windows to be closed, however, if sensors still require bypass after this time, arming will fail.
 
-Starting with version 4.4.0, ring-mqtt exposes an Arming Bypass Mode switch which can by toggled to change this arming behavior.  When this switch is "on", arming commands will automatically bypass any faulted contact sensors.  While this option always default to "off", if you prefer the default state to always be "on" you can create an automation to toggle it to "on" state any time it's detect as off.
+Starting with version 4.4.0, ring-mqtt exposes an Arming Bypass Mode switch which can be toggled to change this arming behavior.  When this switch is "on", arming commands will automatically bypass any faulted contact sensors.  While this option always default to "off", if you prefer the default state to always be "on" you can create an automation to toggle it to "on" state any time it's detect as off.
 
 ### Limiting Locations
 By default, this script will discover and monitor enabled devices across all locations, even shared locations for which you have permissions.  To limit monitored locations you can create a separate account and assign only the desired resources to it, or you can pass location_ids using the appropriate config option.  To get the location id from the ring website simply login to [Ring.com](https://ring.com/users/sign_in) and look at the address bar in the browser. It will look similar to ```https://account.ring.com/account/dashboard?l=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx``` with the last path element being the location id (the id is after l=).
@@ -161,10 +161,10 @@ Since ring-mqtt version 4.3 ring-mqtt has the ability to send still image snapsh
 
 When snapshot support is enabled, the script always attempts to grab a snapshot on initial startup.
 
-When interval mode is selected, snapshots of cameras with wired power supply are taken every 30 seconds by default, for battery powered cameras taking a snapshot every 30 seconds leads to signifcant power drain so snapshots are taken every 10 minutes, however, if the Ring Snapshot Capture feature is enabled, snapshots are instead taken at the frequency selected in the Ring app for this feature (minium 5 minutes for battery powere cameras).  If interval mode is enabled the interval can be changed dynamically from 10 to 604,800 seconds (7 days).
+When interval mode is selected, snapshots of cameras with wired power supply are taken every 30 seconds by default, for battery powered cameras taking a snapshot every 30 seconds leads to significant power drain so snapshots are taken every 10 minutes, however, if the Ring Snapshot Capture feature is enabled, snapshots are instead taken at the frequency selected in the Ring app for this feature (minimum 5 minutes for battery powered cameras).  If interval mode is enabled the interval can be changed dynamically from 10 to 604,800 seconds (7 days).
 
 ### Volume Control
-Volume Control is supported for Ring Keypads and Base Stations.  Note that Ring shared users do not have access to control the Base Station volume so, if you want to control the Base Station volume using this integration, you must generate the refresh token using the primary Ring account.  During startup the system attempts to detect if the account can control the base station volume and only shows the volume control if it determines the accout has access.  This is a limitation of the Ring API as even the offical Ring App does not offer volume control to shared users.
+Volume Control is supported for Ring Keypads and Base Stations.  Note that Ring shared users do not have access to control the Base Station volume so, if you want to control the Base Station volume using this integration, you must generate the refresh token using the primary Ring account.  During startup the system attempts to detect if the account can control the base station volume and only shows the volume control if it determines the account has access.  This is a limitation of the Ring API as even the offical Ring App does not offer volume control to shared users.
 
 **!!! Important Note about Volume Control in Home Assistant !!!**\
 Volume controls in Home Assistant now use the MQTT number integration so displaying values and changing them via the Lovelace UI or via automations is easy and no longer interacts with light based automations.
@@ -190,7 +190,7 @@ MQTT topics are built consistently during each startup.  The easiest way to dete
       - Disarm code support for Home Assistant (optional)
     - Base Station
       - Panic Switches (same as panic sliders in Ring app, Ring Protect Plan is required)
-      - Siren Swich
+      - Siren Switch
       - Volume Control (if enabled and using Ring primary account)
     - Keypad
       - Volume Control
@@ -222,7 +222,7 @@ MQTT topics are built consistently during each startup.  The easiest way to dete
     - Doorbell (Ding) Events
     - Lights (for devices with lights)
     - Siren (for devices with siren support)
-    - Camera Snapshots (images refresh on motion events or scheduled refresh interval).
+    - Camera Snapshots (images refresh on motion events or scheduled refresh interval)
     - Camera live streams via RTSP (streams start on-demand or can also be started via MQTT, for example to record based on events from other devices)
     - Battery Level (detailed battery data such as charging status and aux battery state in attributes)
     - Wireless Signal in dBm (Wireless network in attributes)
@@ -249,11 +249,11 @@ MQTT topics are built consistently during each startup.  The easiest way to dete
   - Location Modes
     - For locations without a Ring Alarm, can add a panel for controlling camera settings via Ring Location Modes
     - Displays as an Alarm Panel in Home Assistant for setting modes and displaying mode state
-    - Must be explicitly enabled using "enabled_modes" config or ENABLEMODES envrionment variable
+    - Must be explicitly enabled using "enabled_modes" config or ENABLEMODES environment variable
 - Full Home Assistant MQTT discovery and device registry support - devices appear automatically
 - Consistent topic creation based on location/device ID - easy to use with MQTT tools like Node-RED
 - Arm/Disarm commands are monitored for success and retried automatically
-- Support for mulitple locations
+- Support for muliple locations
 - Monitors websocket connection to each alarm and sets reachability status if socket is unavailable (Home Assistant UI reports "unknown" status for unreachable devices), automatically resends device state when connection is established
 - Monitors MQTT connection and Home Assistant MQTT birth messages to trigger automatic resend of configuration and state data after restart/disconnect
 - Does not require MQTT retain and can work well with brokers that provide no persistent storage
