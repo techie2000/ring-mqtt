@@ -20,8 +20,69 @@ if [ -v HASSIO_TOKEN ]; then
     export BRANCH=$(bashio::config "branch")
     export DEBUG=$(bashio::config "debug")
 
-    # Export MQTT service discovery data for use within NodeJS process
-    if bashio::var.has_value "$(bashio::services 'mqtt')"; then
+    MQTT_URL=$(bashio::config "mqtt_url")
+
+    # Parse URL using Node
+    read -r MQTT_USER MQTT_PASS MQTT_HOST MQTT_PORT <<< $(node -e "
+    const u = new URL(process.argv[1]);
+    console.log(u.username, u.password, u.hostname, u.port || '');
+    " "${MQTT_URL}")
+
+    # Check if any component needs service discovery
+    NEEDS_HAMQTTSVC=false
+    if [[ "${MQTT_USER}" == "auto_username" ]] || \
+       [[ "${MQTT_PASS}" == "auto_password" ]] || \
+       [[ "${MQTT_HOST}" == "auto_hostname" ]]; then
+        NEEDS_HAMQTTSVC=true
+    fi
+
+    if [[ "${NEEDS_HAMQTTSVC}" == "true" ]]; then
+        set +e +E
+        
+        # Check if service exists
+        bashio::var.has_value "$(bashio::services 'mqtt')"
+        SERVICE_EXISTS=$?
+        
+        if [[ $SERVICE_EXISTS -ne 0 ]]; then
+            echo "MQTT discovery required, but no MQTT service found..."
+            
+            RETRY_COUNT=0
+            while true; do
+                # Check if service exists now
+                bashio::var.has_value "$(bashio::services 'mqtt')"
+                SERVICE_EXISTS=$?
+                
+                # Exit loop if service now exists
+                [[ $SERVICE_EXISTS -eq 0 ]] && break
+                
+                ((RETRY_COUNT++))
+
+                if [[ ${RETRY_COUNT} -eq 1 ]] || [[ $((RETRY_COUNT % 4)) -eq 0 ]]; then
+                    bashio::addons.installed "core_mosquitto"
+                    ADDON_INSTALLED=$?
+                    
+                    if [[ $ADDON_INSTALLED -eq 0 ]]; then
+                        ADDON_STATE=$(bashio::addon.state "core_mosquitto" || echo "unknown")
+                        
+                        if [[ "${ADDON_STATE}" == "started" ]]; then
+                            echo "Mosquitto addon is running but service information is not available, will attempt addon restart"
+                            echo "Verify that the Home Assistant MQTT integration is configured correctly"
+                            bashio::addon.restart "core_mosquitto"
+                        else
+                            echo "Mosquitto addon found in ${ADDON_STATE} state, check the addon logs for errors and restart it manually"
+                        fi
+                    else
+                        echo "No Mosquitto addon found, verify that it is installed and running"
+                    fi
+                fi
+                
+                echo "MQTT service is not registered with Home Assistant, retrying in 30 seconds..."
+                sleep 30
+            done
+        fi
+        
+        set -e -E
+        
         export HAMQTTHOST=$(bashio::services mqtt "host")
         export HAMQTTPORT=$(bashio::services mqtt "port")
         export HAMQTTUSER=$(bashio::services mqtt "username")
