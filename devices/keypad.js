@@ -43,6 +43,7 @@ export default class Keypad extends RingSocketDevice {
                 message.body?.[0]?.general?.v2?.zid === this.deviceId &&
                 message.body[0].impulse?.v1?.[0]?.impulseType === 'keypad.motion'
             ) {
+                this.debug('Received a keypad motion event')
                 this.processMotion()
             }
         })
