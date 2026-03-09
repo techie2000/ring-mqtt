@@ -17,9 +17,14 @@ export default class SmokeCoKiddie extends RingSocketDevice {
     }
 
     publishState() {
-        const deviceComponents = this.device.data.components
-        const smokeState = deviceComponents?.alarm?.smoke && deviceComponents.alarm.smoke.alarmStatus === 'active' ? 'ON' : 'OFF'
-        const coState = deviceComponents?.alarm?.co && deviceComponents.alarm.co.alarmStatus === 'active' ? 'ON' : 'OFF'
+        const components = this.device.data.components
+        
+        const smokeAlarm = components?.['alarm.smoke']
+        const smokeState = smokeAlarm?.alarmStatus === 'active' ? 'ON' : 'OFF'
+        
+        const coAlarm = components?.['alarm.co']
+        const coState = coAlarm?.alarmStatus === 'active' ? 'ON' : 'OFF'
+        
         this.mqttPublish(this.entity.smoke.state_topic, smokeState)
         this.mqttPublish(this.entity.co.state_topic, coState)
         this.publishAttributes()
